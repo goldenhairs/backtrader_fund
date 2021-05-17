@@ -2,8 +2,6 @@ import calendar
 import datetime
 
 import backtrader as bt
-import pyfolio as pf
-from backtrader.analyzers import pyfolio
 
 
 def weekday(date):
@@ -28,14 +26,6 @@ class strategy(bt.Strategy):
             buy_size = round(250 / self.dataprice[0], 2)
             self.all_fund_menoy += 250
             self.buy(size=buy_size)
-
-        #if self.all_size * self.dataprice - self.broker.getvalue():
-
-        if None:  # self.position.price > self.dataprice[0]:
-
-            self.log('value: %.2f, cash : %.2f, position: %.2f, %.2f' %
-                     (self.dataprice[0], self.broker.getcash(),
-                      self.position.size, self.position.price))
 
 
 if __name__ == '__main__':
