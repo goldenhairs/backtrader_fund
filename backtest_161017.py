@@ -31,7 +31,8 @@ class strategy(bt.Strategy):
 
 if __name__ == '__main__':
     cerebro = bt.Cerebro()
-    start_date = datetime.datetime(2019, 5, 14)
+    # start_date = datetime.datetime(2019, 5, 14)
+    start_date = datetime.datetime(2020, 7, 23)
     # end_date = datetime.datetime(2020, 1, 7)
     end_date = datetime.datetime(2021, 5,20)
 
