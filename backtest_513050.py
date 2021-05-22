@@ -34,7 +34,7 @@ if __name__ == '__main__':
     start_date = datetime.datetime(2018, 1, 1)
     end_date = datetime.datetime(2021, 5, 13)
 
-    data = bt.feeds.GenericCSVData(dataname='sh513050.csv',
+    data = bt.feeds.GenericCSVData(dataname=r'datas/sh513050.csv',
                                    fromdate=start_date,
                                    todate=end_date,
                                    nullvalue=0.0,

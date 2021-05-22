@@ -1,17 +1,14 @@
-import calendar
 import datetime
 
 import backtrader as bt
 
 import backtrader.analyzers as btanalyzers
 
-def weekday(date):
-    date_time = date
-    return (calendar.weekday(date_time.year, date_time.month, date_time.day))
-
 
 class strategy(bt.Strategy):
-    params = (('maperiod', 20), )
+    """
+    实现富国中证 500 定投，如果跌幅达到 2% 则买入
+    """
 
     def log(self, txt, dt=None):
         dt = dt or self.datas[0].datetime.date(0)
@@ -34,9 +31,9 @@ if __name__ == '__main__':
     # start_date = datetime.datetime(2019, 5, 14)
     start_date = datetime.datetime(2020, 7, 23)
     # end_date = datetime.datetime(2020, 1, 7)
-    end_date = datetime.datetime(2021, 5,20)
+    end_date = datetime.datetime(2021, 5, 20)
 
-    data = bt.feeds.GenericCSVData(dataname='161017.csv',
+    data = bt.feeds.GenericCSVData(dataname=r'datas/161017.csv',
                                    fromdate=start_date,
                                    todate=end_date,
                                    nullvalue=0.0,
