@@ -94,3 +94,42 @@ class MomOscStrategy(bt.Strategy):
                                        round((return_all - 1.0) * 100, 2),
                                        round((pow(return_all, 1.0 / 8) - 1.0) * 100, 2)
                                        ))
+
+
+class MomStrategy(bt.Strategy):
+    params = (
+        ('period', 20),
+    )
+
+    def __init__(self):
+        self.dataprice = self.datas[0].close
+        self.order = None
+        self.month = -1
+        self.mom = [bt.indicators.Momentum(i, period=self.params.period) for i in self.datas]
+
+    def next(self):
+        buy_id = 0
+
+        c = [i.momentum[0] for i in self.mom]
+        c[0] = 0
+        index, value = c.index(max(c)), max(c)
+
+        if value > 100:
+            buy_id = index
+
+        for i in range(0, len(c)):
+            if i != buy_id:
+                position_size = self.broker.getposition(data=self.datas[i]).size
+                if position_size != 0:
+                    self.order_target_percent(data=self.datas[i], target=0)
+
+        position_size = self.broker.getposition(data=self.datas[buy_id]).size
+        if position_size == 0:
+            self.order_target_percent(data=self.datas[buy_id], target=0.98)
+
+    def stop(self):
+        return_all = self.broker.getvalue() / 200000.0
+        print('{0}, {1}%, {2}%'.format(self.params.period,
+                                       round((return_all - 1.0) * 100, 2),
+                                       round((pow(return_all, 1.0 / 8) - 1.0) * 100, 2)
+                                       ))
