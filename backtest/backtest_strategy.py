@@ -72,7 +72,6 @@ class MomOscStrategy(bt.Strategy):
         buy_id = 0
 
         c = [i.momosc[0] for i in self.mom]
-        c[0] = 0
         index, value = c.index(max(c)), max(c)
 
         if value > 100:
@@ -111,10 +110,9 @@ class MomStrategy(bt.Strategy):
         buy_id = 0
 
         c = [i.momentum[0] for i in self.mom]
-        c[0] = 0
         index, value = c.index(max(c)), max(c)
 
-        if value > 100:
+        if value > 0:
             buy_id = index
 
         for i in range(0, len(c)):
