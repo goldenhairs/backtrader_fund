@@ -142,12 +142,12 @@ class BBandStrategy(bt.Strategy):
         self.dataprice = self.datas[0].close
         self.order = None
         self.month = -1
-        self.bbands = [bt.indicators.BollingerBandsPct(i, period=self.params.period) for i in self.datas]
+        self.bbandPcts = [bt.indicators.BollingerBandsPct(i, period=self.params.period) for i in self.datas]
 
     def next(self):
         buy_id = 0
 
-        c = [i.momentum[0] for i in self.mom]
+        c = [i.pctb[0] for i in self.bbandPcts]
         index, value = c.index(max(c)), max(c)
 
         if value > 0:
