@@ -122,7 +122,7 @@ class MomOscStrategy(MyStrategy):
         buy_id = 0
 
         c = [i.momosc[0] for i in self.mom]
-        [self.log(i) for i in c]
+        [self.log(f'index:{self.datas[c.index(i)]}, {i}') for i in c]
         index, value = c.index(max(c)), max(c)
 
         if value > 100:
