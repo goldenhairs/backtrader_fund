@@ -1,8 +1,11 @@
-import akshare as ak
 import os
 import sys
 
+import akshare as ak
+from backtrader.functions import All
+
 mainpath = os.path.dirname(os.path.dirname(__file__))
+
 
 def get_all_fund_list():
     """
@@ -71,14 +74,45 @@ def download_etf_fund():
     sh518880 黄金ETF
     sh513100 纳指ETF
     """
-    funds = ['sh513050', 'sz159992', 'sz159952', 'sh510500', 'sz159949', 'sh510310', 'sz159915', 'sh518880', 'sh513100']
-    for fun in funds:
-        get_fund_detail(fun)
+    funds = [
+        'sh513050', 'sz159992', 'sz159952', 'sh510500', 'sz159949', 'sh510310',
+        'sz159915', 'sh518880', 'sh513100'
+    ]
+    for fund in funds:
+        get_fund_detail(fund)
+
+
+def all_etf_name_list():
+    import csv
+    csv_f = os.path.join(mainpath, f'datas/etf_list.csv')
+    fund_list = []
+    with open(csv_f, 'r') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if not row['name'].startswith('N'):
+                fund_list.append(row['symbol'])
+            else:
+                print(row['name'])
+    return fund_list
+
+
+def download_all_etf_fund():
+
+    from progress.bar import IncrementalBar
+
+    fund_list = all_etf_name_list()
+
+    bar = IncrementalBar('Download', max=len(fund_list))
+    for fund in fund_list:
+        bar.next()
+        get_fund_detail(fund)
+        bar.finish()
 
 
 if __name__ == '__main__':
     #get_all_fund_list()
-    #get_etf_list()
+    # get_etf_list()
 
     download_etf_fund()
     download_open_fund()
+    # download_all_etf_fund()
