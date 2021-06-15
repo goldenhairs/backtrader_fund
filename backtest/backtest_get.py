@@ -1,8 +1,6 @@
 import os
-import sys
 
 import akshare as ak
-from backtrader.functions import All
 
 mainpath = os.path.dirname(os.path.dirname(__file__))
 
@@ -31,6 +29,7 @@ def get_fund_detail(etf_fund_code):
     """
     fund_detail = ak.fund_etf_hist_sina(symbol=etf_fund_code)
     path = os.path.join(mainpath, f'datas/{etf_fund_code}.csv')
+    fund_detail['fundname'] = etf_fund_code
     fund_detail.to_csv(path, encoding='utf-8')
 
 
@@ -103,16 +102,24 @@ def download_all_etf_fund():
     fund_list = all_etf_name_list()
 
     bar = IncrementalBar('Download', max=len(fund_list))
+    new_fund_list = []
     for fund in fund_list:
         bar.next()
-        get_fund_detail(fund)
+        try:
+            get_fund_detail(fund)
+        except KeyError:
+            new_fund_list.append(fund)
+
         bar.finish()
+
+    if len(new_fund_list) > 0:
+        print(f'新基金有: {new_fund_list}')
 
 
 if __name__ == '__main__':
     #get_all_fund_list()
     # get_etf_list()
 
-    download_etf_fund()
-    download_open_fund()
-    # download_all_etf_fund()
+    # download_etf_fund()
+    # download_open_fund()
+    download_all_etf_fund()
