@@ -27,12 +27,12 @@ class MyStrategy(bt.Strategy):
         if order.status in [order.Completed]:
             if order.isbuy():
                 self.log(
-                    f'执行买入，价格：{order.executed.price:.2f}，花费：{order.executed.value:.2f}，手续费：{order.executed.comm:.2f}'
+                    f'执行买入，{order.data._name}，价格：{order.executed.price:.2f}，花费：{order.executed.value:.2f}，手续费：{order.executed.comm:.2f}'
                 )
 
             else:
                 self.log(
-                    f'执行卖出，价格：{order.executed.price:.2f}，花费：{order.executed.value:.2f}，手续费：{order.executed.comm:.2f}'
+                    f'执行卖出，{order.data._name}，价格：{order.executed.price:.2f}，花费：{order.executed.value:.2f}，手续费：{order.executed.comm:.2f}'
                 )
         elif order.status in [order.Canceled, order.Margin, order.Rejected]:
             self.log('交易取消、保证金不足、交易被拒绝')
@@ -119,25 +119,28 @@ class MomOscStrategy(MyStrategy):
         ]
 
     def next(self):
-        buy_id = 0
+        buy_id = 999
 
         c = [i.momosc[0] for i in self.mom]
-        [self.log(f'index:{self.datas[c.index(i)]}, {i}') for i in c]
+        [self.log(f'{self.datas[c.index(i)]._name}, {i}') for i in c]
         index, value = c.index(max(c)), max(c)
 
         if value > 100:
             buy_id = index
 
         for i in range(0, len(c)):
+
             if i != buy_id:
                 position_size = self.broker.getposition(
                     data=self.datas[i]).size
                 if position_size != 0:
                     self.order_target_percent(data=self.datas[i], target=0)
 
-        position_size = self.broker.getposition(data=self.datas[buy_id]).size
-        if position_size == 0:
-            self.order_target_percent(data=self.datas[buy_id], target=0.98)
+        if buy_id != 999:
+            position_size = self.broker.getposition(
+                data=self.datas[buy_id]).size
+            if position_size == 0:
+                self.order_target_percent(data=self.datas[buy_id], target=0.98)
 
     def stop(self):
         return_all = self.broker.getvalue() / 200000.0
@@ -146,8 +149,11 @@ class MomOscStrategy(MyStrategy):
             round((pow(return_all, 1.0 / 8) - 1.0) * 100, 2)))
 
 
-class MomStrategy(bt.Strategy):
-    data = ('period', 20),
+class MomStrategy(MyStrategy):
+    params = (
+        ('period', 20),
+        ('printlog', True),
+    )
 
     def __init__(self):
         self.dataprice = self.datas[0].close
@@ -159,11 +165,14 @@ class MomStrategy(bt.Strategy):
         ]
 
     def next(self):
-        buy_id = 0
+        buy_id = 999
 
-        c = [i.momentum[0] for i in self.mom]
+        c = [
+            i.momentum[0] / (i.datas[0].close + i.datas[0].open) * 2
+            for i in self.mom
+        ]
         index, value = c.index(max(c)), max(c)
-
+        [self.log(f'{self.datas[c.index(i)]._name}, {i}') for i in c]
         if value > 0:
             buy_id = index
 
@@ -174,9 +183,11 @@ class MomStrategy(bt.Strategy):
                 if position_size != 0:
                     self.order_target_percent(data=self.datas[i], target=0)
 
-        position_size = self.broker.getposition(data=self.datas[buy_id]).size
-        if position_size == 0:
-            self.order_target_percent(data=self.datas[buy_id], target=0.98)
+        if buy_id != 999:
+            position_size = self.broker.getposition(
+                data=self.datas[buy_id]).size
+            if position_size == 0:
+                self.order_target_percent(data=self.datas[buy_id], target=0.98)
 
     def stop(self):
         return_all = self.broker.getvalue() / 200000.0

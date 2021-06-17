@@ -134,4 +134,5 @@ if __name__ == '__main__':
     3,18, 202.09%, 14.82%
     4,18, 178.64%, 13.67%
     """
-    test_momoscstrategy(fund_name='funds_3')
+    test_momoscstrategy(fund_name='funds_1', optflag=True)
+    # test_momstrategy(funds_name='funds_1', optflag=True)
