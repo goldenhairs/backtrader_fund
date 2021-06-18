@@ -16,6 +16,9 @@ def setup_data():
     sh518880 黄金ETF
     sh513100 纳指ETF
     
+    sz159992 创新药
+    sh512690 酒ETF
+    
     测试三组数据
     1. 创业板 + 沪深300 + 中证500
     2. 创业板 50 + 沪深300 + 中证500
@@ -39,17 +42,21 @@ def setup_data():
     funds_3 = ['sz159915'] + gold_nas
     funds_4 = ['sz159952'] + gold_nas
 
+    jiuyao = ['sz159992', 'sh512690']
+    funds_5 = ['sz159915'] + jiuyao
+
     res = {
         'funds_1': funds_1,
         'funds_2': funds_2,
         'funds_3': funds_3,
-        'funds_4': funds_4
+        'funds_4': funds_4,
+        'funds_5': funds_5,
     }
 
     return res
 
 
-def test_momoscstrategy(optflag=False, fund_name='funds_1'):
+def test_momoscstrategy(optflag=False, fund_name='funds_1', period=18):
     datas = setup_data()
     cash = 200000.00
     periods = range(1, 60)
@@ -69,13 +76,13 @@ def test_momoscstrategy(optflag=False, fund_name='funds_1'):
     else:
         backtestrun(cash=cash,
                     funds=datas[fund_name],
-                    period=18,
-                    start_date=run_start_date,
+                    period=period,
+                    start_date=opt_start_date,
                     end_date=end_date,
                     strategy=MomOscStrategy)
 
 
-def test_momstrategy(optflag=False, funds_name='funds_1'):
+def test_momstrategy(optflag=False, funds_name='funds_1', period=18):
     datas = setup_data()
     cash = 200000.00
     periods = range(1, 60)
@@ -96,13 +103,13 @@ def test_momstrategy(optflag=False, funds_name='funds_1'):
     else:
         backtestrun(cash=cash,
                     funds=datas[funds_name],
-                    period=18,
-                    start_date=run_start_date,
+                    period=period,
+                    start_date=opt_start_date,
                     end_date=run_end_date,
                     strategy=MomStrategy)
 
 
-def test_bbandstrategy(optflag=False, fund_name='funds_1'):
+def test_bbandstrategy(optflag=False, fund_name='funds_1', period=18):
     datas = setup_data()
     cash = 200000.00
     periods = range(1, 60)
@@ -121,7 +128,7 @@ def test_bbandstrategy(optflag=False, fund_name='funds_1'):
     else:
         backtestrun(cash=cash,
                     funds=datas[fund_name],
-                    period=18,
+                    period=period,
                     start_date=run_start_date,
                     end_date=end_date,
                     strategy=BBandStrategy)
@@ -129,10 +136,15 @@ def test_bbandstrategy(optflag=False, fund_name='funds_1'):
 
 if __name__ == '__main__':
     """
-    1,16, 163.01%, 12.85%
-    2,16, 156.6%, 12.5%
-    3,18, 202.09%, 14.82%
-    4,18, 178.64%, 13.67%
+    momosc
+    1, 19, 82.59%, 7.82%
+    5, 14, 112.46%, 9.88%
+    mom
+    1, 3, 73.74%, 7.15%
+    5, 13, 118.27%, 10.25%
     """
-    test_momoscstrategy(fund_name='funds_1', optflag=True)
+    # test_momoscstrategy(fund_name='funds_5', optflag=True)
     # test_momstrategy(funds_name='funds_1', optflag=True)
+
+    test_momoscstrategy(fund_name='funds_5', period=14)
+    test_momstrategy(funds_name='funds_5', period=13)

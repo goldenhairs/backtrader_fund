@@ -168,7 +168,7 @@ class MomStrategy(MyStrategy):
         buy_id = 999
 
         c = [
-            i.momentum[0] / (i.datas[0].close + i.datas[0].open) * 2
+            i.momentum[0]  #/ (i.datas[0].close + i.datas[0].open) * 2
             for i in self.mom
         ]
         index, value = c.index(max(c)), max(c)
