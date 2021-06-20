@@ -233,3 +233,11 @@ class BBandStrategy(bt.Strategy):
         print('{0}, {1}%, {2}%'.format(
             self.params.period, round((return_all - 1.0) * 100, 2),
             round((pow(return_all, 1.0 / 8) - 1.0) * 100, 2)))
+
+
+class bband_momosc(MyStrategy):
+    """
+    先找到动量最好的一支，然后判断，如果跌破布林下线则买入，跌破中线买入一半，从中线上涨到上线则卖出二分之一，从下线上涨到布林中线卖出二分之一。
+    """
+    pass
+    
