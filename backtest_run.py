@@ -1,8 +1,8 @@
 import datetime
 
 from backtest.backtest_cerebro import backtestopt, backtestrun
-from backtest.backtest_strategy import (BBandStrategy, MomOscStrategy,
-                                        MomStrategy)
+from backtest.backtest_strategy import (BBandMomoscStrategy, BBandStrategy,
+                                        MomOscStrategy, MomStrategy)
 
 
 def setup_data():
@@ -16,6 +16,8 @@ def setup_data():
     sh518880 黄金ETF
     sh513100 纳指ETF
     
+
+
     sz159992 创新药
     sh512690 酒ETF
     
@@ -61,9 +63,9 @@ def test_momoscstrategy(optflag=False, fund_name='funds_1', period=18):
     cash = 200000.00
     periods = range(1, 60)
 
-    opt_start_date = datetime.datetime(2017, 5, 28)
+    opt_start_date = datetime.datetime(2020, 4, 10)
 
-    run_start_date = datetime.datetime(2020, 1, 6)
+    run_start_date = datetime.datetime(2021, 3, 1)
     end_date = datetime.datetime.now()
 
     if optflag:
@@ -134,6 +136,31 @@ def test_bbandstrategy(optflag=False, fund_name='funds_1', period=18):
                     strategy=BBandStrategy)
 
 
+def test_oscbbandstrategy(optflag=False, fund_name='funds_1', period=18):
+    datas = setup_data()
+    cash = 200000.00
+    periods = range(1, 60)
+
+    opt_start_date = datetime.datetime(2017, 5, 28)
+    run_start_date = datetime.datetime(2020, 1, 6)
+    end_date = datetime.datetime.now()
+
+    if optflag:
+        backtestopt(cash=cash,
+                    funds=datas[fund_name],
+                    periods=periods,
+                    start_date=opt_start_date,
+                    end_date=end_date,
+                    strategy=BBandMomoscStrategy)
+    else:
+        backtestrun(cash=cash,
+                    funds=datas[fund_name],
+                    period=period,
+                    start_date=run_start_date,
+                    end_date=end_date,
+                    strategy=BBandMomoscStrategy)
+
+
 if __name__ == '__main__':
     """
     momosc
@@ -147,4 +174,4 @@ if __name__ == '__main__':
     # test_momstrategy(funds_name='funds_1', optflag=True)
 
     test_momoscstrategy(fund_name='funds_5', period=14)
-    test_momstrategy(funds_name='funds_5', period=13)
+    # test_momstrategy(funds_name='funds_5', period=13)
