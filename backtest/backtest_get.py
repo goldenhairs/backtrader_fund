@@ -23,12 +23,28 @@ def get_etf_list():
     fund_list.to_csv(path, encoding='utf-8')
 
 
-def get_fund_detail(etf_fund_code):
+def get_lof_list():
+    """
+    获取LOF基金清单
+    """
+    fund_list = ak.fund_etf_category_sina(symbol="LOF基金")
+    path = os.path.join(mainpath, f'datas/lof_list.csv')
+    fund_list.to_csv(path, encoding='utf-8')
+
+
+def get_fund_detail(etf_fund_code, down_path=''):
     """
     获取 ETF 基金数据
     """
     fund_detail = ak.fund_etf_hist_sina(symbol=etf_fund_code)
-    path = os.path.join(mainpath, f'datas/{etf_fund_code}.csv')
+    path = ''
+    if down_path == '':
+        path = os.path.join(mainpath, f'datas/{etf_fund_code}.csv')
+    if down_path == 'etfs':
+        path = os.path.join(mainpath, f'datas/etfs/{etf_fund_code}.csv')
+    if down_path == 'lofs':
+        path = os.path.join(mainpath, f'datas/lofs/{etf_fund_code}.csv')
+
     fund_detail['fundname'] = etf_fund_code
     fund_detail.to_csv(path, encoding='utf-8')
 
@@ -81,9 +97,9 @@ def download_etf_fund():
         get_fund_detail(fund)
 
 
-def all_etf_name_list():
+def name_list(csv_name):
     import csv
-    csv_f = os.path.join(mainpath, f'datas/etf_list.csv')
+    csv_f = os.path.join(mainpath, f'datas/{csv_name}')
     fund_list = []
     with open(csv_f, 'r') as f:
         reader = csv.DictReader(f)
@@ -95,18 +111,18 @@ def all_etf_name_list():
     return fund_list
 
 
-def download_all_etf_fund():
+def download_all_fund(csv_name, down_path=''):
 
     from progress.bar import IncrementalBar
 
-    fund_list = all_etf_name_list()
+    fund_list = name_list(csv_name)
 
     bar = IncrementalBar('Download', max=len(fund_list))
     new_fund_list = []
     for fund in fund_list:
         bar.next()
         try:
-            get_fund_detail(fund)
+            get_fund_detail(fund, down_path)
         except KeyError:
             new_fund_list.append(fund)
 
@@ -119,7 +135,10 @@ def download_all_etf_fund():
 if __name__ == '__main__':
     #get_all_fund_list()
     # get_etf_list()
+    # get_lof_list()
 
     # download_etf_fund()
     # download_open_fund()
-    download_all_etf_fund()
+
+    download_all_fund('etf_list.csv', 'etfs')
+    download_all_fund('lof_list.csv', 'lofs')
